@@ -8,13 +8,17 @@
 </head>
 <body>
     <h1>Sorting Visualizer</h1>
-    <div id="container"></div>
-
-    <hr>
-    <div>
-        <button onclick="init()">Init</button>
-        <button onclick="play()">Play</button>
+    <div id="controls">
+        <select id="algorithm">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+        </select>
+        <input type="range" id="speed" min="10" max="1000" value="100" onchange="updateSpeed()">
+        <button onclick="init()">Reset</button>
+        <button onclick="play()">Sort</button>
     </div>
+    <div id="container"></div>
 
     <script src="script.js"></script>
 </body>

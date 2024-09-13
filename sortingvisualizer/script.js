@@ -1,9 +1,10 @@
-const n = 20;
+const n = 50;
 const array = [];
 
-init();
-
 let audioCtx = null;
+let animationSpeed = 100;
+
+init();
 
 function playNote(freq){//frequency
     if (audioCtx == null){
@@ -33,8 +34,27 @@ function init(){
 }
 
 function play() {
+    const algorithm = document.getElementById("algorithm").value;
     const copy = [...array];
-    const moves = bubbleSort(copy);
+    let moves;
+
+    switch(algorithm){
+        case "bubble":
+            moves = bubbleSort(copy);
+            break;
+        case "selection":
+            moves = selectionSort(copy);
+            break;
+        case "insertion":
+            moves = insertionSort(copy);
+            break;
+
+        default:
+            console.error("Unknown sorting algorithm");
+            return;
+        
+    }
+
     animate(moves);
 }
 
@@ -54,7 +74,7 @@ function animate(moves){
     showBar(move);
     setTimeout (function(){
         animate(moves);
-    },100);
+    },animationSpeed);
 }
 
 function bubbleSort(array){
@@ -77,6 +97,38 @@ function bubbleSort(array){
     return moves;
 }
 
+function selectionSort(array) {
+    const moves = [];
+    for (let i = 0; i < array.length - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < array.length; j++) {
+            moves.push({indices: [minIdx, j], type: "comp"});
+            if (array[j] < array[minIdx]) {
+                minIdx = j;
+            }
+        }
+        if (minIdx !== i) {
+            moves.push({indices: [i, minIdx], type: "swap"});
+            [array[i], array[minIdx]] = [array[minIdx], array[i]];
+        }
+    }
+    return moves;
+}
+
+function insertionSort(array) {
+    const moves = [];
+    for (let i = 1; i < array.length; i++) {
+        let j = i;
+        while (j > 0 && array[j - 1] > array[j]) {
+            moves.push({indices: [j - 1, j], type: "comp"});
+            moves.push({indices: [j - 1, j], type: "swap"});
+            [array[j - 1], array[j]] = [array[j], array[j - 1]];
+            j--;
+        }
+    }
+    return moves;
+}
+
 function showBar(move){
     container.innerHTML = "";
     for(let i = 0; i<array.length;i++){
@@ -90,4 +142,8 @@ function showBar(move){
         }
         container.appendChild(bar);
     }
+}
+
+function updateSpeed() {
+    animationSpeed = document.getElementById('speed').value;
 }
