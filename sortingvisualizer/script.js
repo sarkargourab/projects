@@ -3,6 +3,28 @@ const array = [];
 
 init();
 
+let audioCtx = null;
+
+function playNote(freq){//frequency
+    if (audioCtx == null){
+        audioCtx = new(
+            AudioContext ||
+            webkitAudioContext ||
+            window.webkitAudioContext
+        )();
+    }
+    const dur = 0.1;
+    const osc = audioCtx.createOscillator();
+    osc.frequency.value = freq;
+    osc.start();
+    osc.stop(audioCtx.currentTime+dur);
+    const node = audioCtx.createGain();
+    node.gain.value = 0.1;
+    node.gain.linearRampToValueAtTime(0,audioCtx.currentTime+dur);
+    osc.connect(node)
+    osc.connect(audioCtx.destination)
+}
+
 function init(){
     for(let i= 0;i<n;i++){
         array[i] = Math.random();
@@ -27,6 +49,8 @@ function animate(moves){
     if(move.type == "swap"){
         [array[i],array[j]] = [array[j],array[i]];
     }
+    playNote(100+array[i]*500);
+    playNote(100+array[j]*500);
     showBar(move);
     setTimeout (function(){
         animate(moves);
